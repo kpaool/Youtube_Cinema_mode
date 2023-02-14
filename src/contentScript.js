@@ -41,3 +41,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse({});
   return true;
 });
+
+
+  setTimeout(()=>{
+    document.querySelector("#secondary").style.display="none";
+    document.querySelector("#below").style.display="none";
+    console.log("Making coast clear");
+  },10000);
+
+
