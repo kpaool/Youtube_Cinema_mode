@@ -16,16 +16,12 @@
     "default_title": "Youtube Lights",
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "content_scripts": [
     {
-      "matches": ["https://*/*","http://127.0.0.1/*"],
+      "matches": ["https://*/*", "http://127.0.0.1/*"],
       "run_at": "document_idle",
-      "js": [
-        "contentScript.js"
-      ]
+      "js": ["stackblur.js","contentScript.js"]
     }
   ]
 }

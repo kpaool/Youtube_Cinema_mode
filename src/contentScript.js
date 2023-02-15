@@ -42,11 +42,87 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
+class VideoColorSampler {
+  constructor(video, canvasSize = 300) {
+    if (!video) {
+      throw new Error("Invalid video element.");
+    }
 
-  setTimeout(()=>{
-    document.querySelector("#secondary").style.display="none";
-    document.querySelector("#below").style.display="none";
-    console.log("Making coast clear");
-  },10000);
+    this.video = video;
+    this.canvas = document.createElement('canvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.canvas.width = canvasSize;
+    this.canvas.height = canvasSize * (this.video.videoHeight / this.video.videoWidth);
+    this.latestImageData = null;
+    this.isProcessing = false;
+    this.processQueue = [];
+    this.updateLatestImageData();
+  }
+
+  getBlurredImage(radius = 10) {
+    const blurredCanvas = document.createElement('canvas');
+    const blurredCtx = blurredCanvas.getContext('2d');
+    blurredCanvas.width = this.canvas.width;
+    blurredCanvas.height = this.canvas.height;
+
+    if (this.latestImageData) {
+      blurredCtx.putImageData(this.latestImageData, 0, 0);
+      blurredCtx.filter = `blur(${radius}px)`;
+      blurredCtx.drawImage(blurredCanvas, 0, 0, this.canvas.width, this.canvas.height);
+      return blurredCanvas;
+    } else {
+      console.error('Error getting blurred image: latestImageData is null');
+      return null;
+    }
+  }
+
+  setBlurredBackground(node, radius = 10) {
+    const blurredImage = this.getBlurredImage(radius);
+    if (blurredImage) {
+      node.style.background = `url(${blurredImage.toDataURL()})`;
+      node.style.backgroundSize = 'cover';
+      node.style.transform = 'scale(1.01)';
+      node.style.overflow = 'hidden';
+    } else {
+      console.error('Error setting blurred background: blurredImage is null');
+    }
+  }
+
+  updateLatestImageData() {
+    if (!this.isProcessing) {
+      this.isProcessing = true;
+      requestAnimationFrame(() => {
+        this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        this.latestImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        this.isProcessing = false;
+        this.processQueue.forEach(callback => callback(this.latestImageData));
+        this.processQueue = [];
+        this.updateLatestImageData();
+      });
+    } else {
+      this.processQueue.push(callback);
+    }
+  }
+}
 
 
+
+
+
+
+setTimeout(() => {
+  document.querySelector('#secondary').style.display = 'none';
+  document.querySelector('#below').style.display = 'none';
+
+  let video = document.querySelector('video');
+  let ytApp = document.querySelector('ytd-app');
+  let videoColorSampler = new VideoColorSampler(video,200);
+
+  function updateBackground() {
+    videoColorSampler.setBlurredBackground(ytApp,5);
+    requestAnimationFrame(updateBackground);
+  }
+  
+  requestAnimationFrame(updateBackground,5);
+
+}, 10000);
