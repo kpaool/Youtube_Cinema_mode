@@ -116,13 +116,13 @@ setTimeout(() => {
 
   let video = document.querySelector('video');
   let ytApp = document.querySelector('ytd-app');
-  let videoColorSampler = new VideoColorSampler(video,200);
+  let videoColorSampler = new VideoColorSampler(video,300);
 
   function updateBackground() {
-    videoColorSampler.setBlurredBackground(ytApp,5);
+    videoColorSampler.setBlurredBackground(ytApp,10);
     requestAnimationFrame(updateBackground);
   }
   
-  requestAnimationFrame(updateBackground,5);
+  requestAnimationFrame(updateBackground);
 
 }, 10000);
