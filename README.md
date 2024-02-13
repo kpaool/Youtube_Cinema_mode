@@ -4,10 +4,17 @@ My Chrome Extension
 
 ## Features
 
-- Feature 1
-- Feature 2
+- Background blurred vison that enhances music perfomance
 
 ## Install
+
+Simply pull this repo, install ther required node packages and build the project.
+
+Install the build files as an extension in chrome or microsoft edge
+
+Enable the extension and watch any video. Wait for 10 seconds for the magic
+
+
 
 [**Chrome** extension]() <!-- TODO: Add chrome extension link inside parenthesis -->
 
